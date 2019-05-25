@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dogapi": "^2.8.3",
+    "dotenv": "^8.0.0",
     "express": "^4.17.0"
   }
 }

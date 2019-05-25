@@ -1,17 +1,36 @@
+require('dotenv').config()
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const util = require('util');
 
+const dogapi = require("dogapi");
+
+const LOGS_LIST_ENDPOINT = "/logs-queries/list"
+
+//initialize dogapi
+let config = { dd_options: { api_key: process.env.API_KEY, app_key: process.env.APP_KEY}};
+dogapi.initialize(config.dd_options)
+
+
+console.log(config)
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));  
 app.use(bodyParser.json());
 
 // An api endpoint that returns a short list of items
-app.get('/api', (req,res) => {
-    var list = ["item1", "item2", "item3"];
-    res.json(list);
-    console.log('Sent list of items');
+app.get('/api', async (req,res) => {
+	dogapi.client.request("POST", "/logs-queries/list", { body: {"query": "service:nodejs status:info @state_name:* @state_id:* @revenue:*","time": {"from": "1558310400", "to": "now"}, "sort": "desc", "limit": 1000}},function(err, results){
+    	console.dir('err',err)
+    	console.dir(results);
+	    
+
+	    
+	    var list = ["item1", "item2", "item3"];
+	    res.json(results);
+	    console.log('Sent list of items');
+    })
 });
 
 // Handles any requests that don't match the ones above
