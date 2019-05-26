@@ -49,7 +49,7 @@ app.get('/', (req,res) => {
 })
 
 app.get('/svg_response_api', async (req,res) => {
-	const browser = await puppeteer.launch();
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     let hostname = req.headers.host
 
