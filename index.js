@@ -3,8 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const util = require('util');
-
+const puppeteer = require('puppeteer')
 const dogapi = require("dogapi");
+const fs = require('fs')
+
 
 const LOGS_LIST_ENDPOINT = "/logs-queries/list"
 
@@ -25,8 +27,6 @@ app.get('/api', async (req,res) => {
     	console.dir('err',err)
     	console.dir(results);
 	    
-
-	    
 	    var list = ["item1", "item2", "item3"];
 	    res.json(results);
 	    console.log('Sent list of items');
@@ -45,6 +45,25 @@ app.get('/', (req,res) => {
   console.log('ok')
   console.log('reqquery', req.query)
   res.redirect(`/graph?details=5`)
+})
+
+app.get('/svg_response_api', async (req,res) => {
+	console.log('ok going')
+	const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    await page.setViewport({ width: 1200, height: 800 })
+    await page.goto('http://localhost:5000/', {waitUntil: 'networkidle0'});
+    await page.waitFor(3000)
+    const svg = await page.$("svg");
+    const html = await page.evaluate(svg =>{ svg.setAttribute('xmlns',"http://www.w3.org/2000/svg"); return svg.outerHTML}, svg)
+  	await browser.close();
+ 
+  	console.dir('response is ')
+  	console.log(html)
+
+    res.setHeader('Content-Type', 'image/svg+xml');
+  	res.send(html)
 })
 
 const port = process.env.PORT || 5000;
