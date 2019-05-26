@@ -6,7 +6,6 @@ import {
   Geography,
 } from "react-simple-maps"
 import { scaleLinear } from "d3-scale"
-import * as example_api_output from "./example_api_output.json"
 import * as us_json from "./us_states.json"
 
 const wrapperStyles = {
@@ -15,30 +14,33 @@ const wrapperStyles = {
   margin: "0 auto",
 }
 
-const colorScale = scaleLinear()
+let colorScale = scaleLinear()
   .domain([10,100])
-  .range(["#FFFFFF","#FF5722"])
+  .range(["#FFFFFF","#774aa4"])
+
+const urlParams = new URLSearchParams(window.location.search);
 
 class AlbersUSA extends Component {
   constructor() {
     super()
     this.state = {
       logs_api_output: [],
+      sorting_key: '',
+      aggregation: ''
     }
   }
   componentWillMount() {
     this.callBackendAPI().then( (res) => {
-      console.log('resturned yo', res)
-      this.setState({ logs_api_output: res.logs })
+      this.setState({ logs_api_output: res.logs, sorting_key: res.sorting_key || 'revenue', aggregation: res.aggregation || 'sum' })
     }).catch( (err) => {
-      console.log('error in componentWillMount', err)
-      this.setState({ logs_api_output: [] })
+      console.log('error', err)
+      this.setState({ logs_api_output: [], sorting_key: '', aggregation: '' })
     })
-    
   }
 
   callBackendAPI = async () => {
-    const response = await fetch('/api');
+    const myParam = urlParams.get('config');    
+    const response = await fetch(`/api?config=${myParam}`);
     const body = await response.json();
 
     if (response.status !== 200) {
@@ -49,8 +51,9 @@ class AlbersUSA extends Component {
   }
 
   render() {
-
-    const { logs_api_output } = this.state
+    const logs_api_output = this.state.logs_api_output
+    const sorting_key = this.state.sorting_key
+    const aggregation = this.state.aggregation
 
     return (
       <div style={wrapperStyles}>
@@ -68,11 +71,41 @@ class AlbersUSA extends Component {
           >
           <ZoomableGroup disablePanning>
             <Geographies geography={us_json.default} disableOptimization>
-              {(geographies, projection) =>
-                geographies.map((geography, i) => {
-                  const stateRevenue = logs_api_output.find(s => {
-                    return s.content.attributes.state_name === geography.properties.NAME_1
-                  }) || {content: {attributes: {revenue: 0}}}
+              {(geographies, projection) => {
+
+                
+                let max = Math.max.apply(null,logs_api_output.map( (x) => { return x.content.attributes[sorting_key] }))
+                if(max < 0) {
+                  max = 0
+                }
+
+                colorScale = scaleLinear().domain([10,max]).range(["#FFFFFF","#774aa4"])
+
+                const sorted_logs_api_output = logs_api_output.reduce( (storage,log) => {
+                  let name = log.content.attributes.state_name
+                  if (storage[name] === undefined) {
+                    storage[name] = {sum: 0, count: 0}
+                  }
+                  
+                  storage[name]['sum'] = storage[name]['sum'] + log.content.attributes[sorting_key]
+                  storage[name]['count'] = storage[name]['count'] + 1
+                  return storage
+                },{})
+
+                console.log(sorted_logs_api_output)
+                console.log(aggregation)
+                console.log(sorting_key)
+                return geographies.map((geography, i) => {
+                  let stateRevenue = 0
+
+                  if (sorted_logs_api_output[geography.properties.NAME_1] !== undefined) {
+                    if (aggregation == 'avg') {
+                      stateRevenue = sorted_logs_api_output[geography.properties.NAME_1]['sum'] /  sorted_logs_api_output[geography.properties.NAME_1]['count']
+                    } else if (aggregation == 'sum') {
+                      stateRevenue = sorted_logs_api_output[geography.properties.NAME_1]['sum']
+                    }
+                  }
+                  
                   return (
                     <Geography
                       key={`state-${geography.properties.ID_1}`}
@@ -82,28 +115,16 @@ class AlbersUSA extends Component {
                       projection={projection}
                       style={{
                         default: {
-                          fill: colorScale(+stateRevenue["content"]["attributes"]["revenue"]),
+                          fill: colorScale(+stateRevenue),
                           stroke: "#607D8B",
                           strokeWidth: 0.75,
-                          outline: "none",
-                        },
-                        hover: {
-                          fill: "#607D8B",
-                          stroke: "#607D8B",
-                          strokeWidth: 0.75,
-                          outline: "none",
-                        },
-                        pressed: {
-                          fill: "#FF5722",
-                          stroke: "#607D8B",
-                          strokeWidth: 0.75,
-                          outline: "none",
-                        },
+                          outline: "none"
+                        }
                       }}
                     />
                   )
-                }
-              )}
+                })
+              }}
             </Geographies>
           </ZoomableGroup>
         </ComposableMap>
