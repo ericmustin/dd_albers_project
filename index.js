@@ -14,8 +14,6 @@ const LOGS_LIST_ENDPOINT = "/logs-queries/list"
 let config = { dd_options: { api_key: process.env.API_KEY, app_key: process.env.APP_KEY}};
 dogapi.initialize(config.dd_options)
 
-
-console.log(config)
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));  
