@@ -30,12 +30,9 @@ class AlbersUSA extends Component {
     }
   }
   componentWillMount() {
-    console.log('do i start')
     this.callBackendAPI().then( (res) => {
-      console.log('do i run')
-      this.setState({ logs_api_output: res.logs, sorting_key: res.sorting_key || 'revenue', aggregation: res.aggregation || 'sum' })
+      this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'revenue', aggregation: res.aggregation || 'sum' })
     }).catch( (err) => {
-      console.log('error', err)
       this.setState({ logs_api_output: [], sorting_key: '', aggregation: '' })
     })
   }

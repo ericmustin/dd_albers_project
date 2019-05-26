@@ -24,17 +24,14 @@ app.use(bodyParser.json());
 app.get('/api', async (req,res) => {
   let query_body = {}
   if (req.query.config) {
-    console.log('config is', req.query.config)
     let config_data = await axios.get(req.query.config)
     
     if (config_data.data) {
-      console.log('config data' , config_data.data)
       query_body = config_data.data
     }
   }
   
 	dogapi.client.request("POST", "/logs-queries/list", { body: query_body},function(err, results){
-    console.log('i made a response', results, err)
 	    res.json({logs: results.logs});
     })
 });
