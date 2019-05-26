@@ -34,6 +34,7 @@ app.get('/api', async (req,res) => {
   }
   
 	dogapi.client.request("POST", "/logs-queries/list", { body: query_body},function(err, results){
+    console.log('i made a response', results, err)
 	    res.json({logs: results.logs});
     })
 });
