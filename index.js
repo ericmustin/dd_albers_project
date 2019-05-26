@@ -10,7 +10,7 @@ const axios = require('axios')
 
 
 const LOGS_LIST_ENDPOINT = "/logs-queries/list"
-
+console.log(process.env.APP_KEY)
 //initialize dogapi
 let config = { dd_options: { api_key: process.env.API_KEY, app_key: process.env.APP_KEY}};
 dogapi.initialize(config.dd_options)
@@ -66,6 +66,6 @@ app.get('/svg_response_api', async (req,res) => {
 
 const port = process.env.PORT || 5000;
 var listener = app.listen(port);
-console.log(listener.address())
+
 
 console.log('App is listening on port ok' + port);

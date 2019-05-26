@@ -72,7 +72,6 @@ class AlbersUSA extends Component {
           <ZoomableGroup disablePanning>
             <Geographies geography={us_json.default} disableOptimization>
               {(geographies, projection) => {
-
                 
                 let max = Math.max.apply(null,logs_api_output.map( (x) => { return x.content.attributes[sorting_key] }))
                 if(max < 0) {
@@ -92,9 +91,6 @@ class AlbersUSA extends Component {
                   return storage
                 },{})
 
-                console.log(sorted_logs_api_output)
-                console.log(aggregation)
-                console.log(sorting_key)
                 return geographies.map((geography, i) => {
                   let stateRevenue = 0
 
