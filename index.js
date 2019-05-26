@@ -10,7 +10,7 @@ const axios = require('axios')
 
 
 const LOGS_LIST_ENDPOINT = "/logs-queries/list"
-console.log(process.env.APP_KEY)
+
 //initialize dogapi
 let config = { dd_options: { api_key: process.env.API_KEY, app_key: process.env.APP_KEY}};
 dogapi.initialize(config.dd_options)
@@ -24,9 +24,11 @@ app.use(bodyParser.json());
 app.get('/api', async (req,res) => {
   let query_body = {}
   if (req.query.config) {
+    console.log('config is', req.query.config)
     let config_data = await axios.get(req.query.config)
     
     if (config_data.data) {
+      console.log('config data' , config_data.data)
       query_body = config_data.data
     }
   }
