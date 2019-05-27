@@ -9,7 +9,7 @@
     "server": "nodemon index.js",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"    
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "dogapi": "^2.8.3",
     "dotenv": "^8.0.0",
     "express": "^4.17.0",
+    "express-rate-limit": "^4.0.1",
     "puppeteer": "^1.17.0"
   }
 }

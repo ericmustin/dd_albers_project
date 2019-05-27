@@ -7,6 +7,9 @@ const puppeteer = require('puppeteer')
 const dogapi = require("dogapi");
 const fs = require('fs');
 const axios = require('axios')
+const rateLimit = require("express-rate-limit");
+// Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
+// see https://expressjs.com/en/guide/behind-proxies.html
 
 
 const LOGS_LIST_ENDPOINT = "/logs-queries/list"
@@ -19,6 +22,16 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));  
 app.use(bodyParser.json());
+
+app.set('trust proxy', 1);
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 250 // limit each IP to 100 requests per windowMs
+});
+
+//  apply to all requests
+app.use(limiter);
 
 // An api endpoint that returns a short list of items
 app.get('/api', async (req,res) => {
