@@ -1,6 +1,6 @@
-# dd alberts project
+# dd albers project
 
-visualize dd logs-queries with Albers USA D3 projections
+visualize dd log query search results with Albers USA D3 projections
 
 ## setup [wip]
 
