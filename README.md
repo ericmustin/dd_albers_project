@@ -22,7 +22,7 @@ visit localhost:5000/?config=<gist_of_logs_queries_post_body.json>
 
 ```
 
-### example gif output
+### example output
 ![example_output_dd_albers](./example_output_dd_albers.png)
 
 
