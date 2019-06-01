@@ -7,12 +7,20 @@ import {
 } from "react-simple-maps"
 import { scaleLinear } from "d3-scale"
 import * as us_json from "./us_states.json"
+import ReactTooltip from 'react-tooltip'
+import Select from 'react-select';
+
 
 const wrapperStyles = {
   width: "100%",
   maxWidth: 980,
   margin: "0 auto",
 }
+
+const options = [
+  { value: 'avg', label: 'Average' },
+  { value: 'sum', label: 'Sum' }
+];
 
 let colorScale = scaleLinear()
   .domain([10,100])
@@ -29,8 +37,10 @@ class AlbersUSA extends Component {
       aggregation: ''
     }
 
-    this.switchToAvg = this.switchToAvg.bind(this)
-    this.switchToSum = this.switchToSum.bind(this)
+    // deprecating in favor of react-select
+    // this.switchToAvg = this.switchToAvg.bind(this)
+    // this.switchToSum = this.switchToSum.bind(this)
+    this.switchAggregation = this.switchAggregation.bind(this)
   }
 
   componentWillMount() {
@@ -53,12 +63,16 @@ class AlbersUSA extends Component {
     return body;
   }
 
-  switchToAvg() {
-    this.setState({ aggregation: "avg" })
-  }
+  // deprecating in favor of react-select
+  // switchToAvg() {
+  //   this.setState({ aggregation: "avg" })
+  // }
+  // switchToSum() {
+  //   this.setState({ aggregation: "sum" })
+  // }
 
-  switchToSum() {
-    this.setState({ aggregation: "sum" })
+  switchAggregation(aggregation) {
+    this.setState({ aggregation: aggregation.value})
   }
 
   render() {
@@ -69,12 +83,11 @@ class AlbersUSA extends Component {
     return (
       <div>
         <div>
-          <button onClick={ this.switchToAvg }>
-            { "Average" }
-          </button>
-          <button onClick={ this.switchToSum }>
-            { "Sum" }
-          </button>        
+          <Select
+            value={aggregation.label}
+            onChange={this.switchAggregation}
+            options={options}
+          />
         </div>
         <div style={wrapperStyles}>
           <ComposableMap
@@ -124,6 +137,8 @@ class AlbersUSA extends Component {
 
                     return (
                       <Geography
+                        data-tip={`${geography.properties.NAME_1}, revenue: $${stateRevenue}`}
+                        data-for='global'
                         key={`state-${geography.properties.ID_1}`}
                         cacheId={`state-${geography.properties.ID_1}`}
                         round
@@ -137,6 +152,7 @@ class AlbersUSA extends Component {
                             outline: "none"
                           }
                         }}
+
                       />
                     )
                   })
@@ -144,6 +160,7 @@ class AlbersUSA extends Component {
               </Geographies>
             </ZoomableGroup>
           </ComposableMap>
+          <ReactTooltip id='global'/>
         </div>
       </div>
     )
