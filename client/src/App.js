@@ -11,10 +11,23 @@ import ReactTooltip from 'react-tooltip'
 import Select from 'react-select';
 
 
-const wrapperStyles = {
-  width: "100%",
+const mapStyles = {
+  width: "80%",
   maxWidth: 980,
   margin: "0 auto",
+  float: "left",
+  display: "block",
+  position: "relative",
+}
+
+const optionStyles = {
+  width: "20%",
+  maxWidth: 400,
+  margin: "0 auto",
+  float: "left",
+  display: "block",
+  position: "relative",
+  textAlign: "center"
 }
 
 const options = [
@@ -82,14 +95,15 @@ class AlbersUSA extends Component {
 
     return (
       <div>
-        <div>
+        <div style={optionStyles}>
+          <p> Aggregation Type </p>
           <Select
             value={aggregation.label}
             onChange={this.switchAggregation}
             options={options}
           />
         </div>
-        <div style={wrapperStyles}>
+        <div style={mapStyles}>
           <ComposableMap
             projection="albersUsa"
             projectionConfig={{
