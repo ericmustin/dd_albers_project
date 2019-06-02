@@ -1,15 +1,15 @@
-import React, { Component } from "react"
+import React, { Component } from "react";
 import {
   ComposableMap,
   ZoomableGroup,
   Geographies,
   Geography,
-} from "react-simple-maps"
-import { scaleLinear } from "d3-scale"
-import * as us_json from "./us_states.json"
-import ReactTooltip from 'react-tooltip'
+} from "react-simple-maps";
+import { scaleLinear } from "d3-scale";
+import * as us_json from "./us_states.json";
+import ReactTooltip from 'react-tooltip';
 import Select from 'react-select';
-
+import CreatableSelect from 'react-select/creatable';
 
 const mapStyles = {
   width: "80%",
@@ -17,7 +17,7 @@ const mapStyles = {
   margin: "0 auto",
   float: "left",
   display: "block",
-  position: "relative",
+  position: "relative"
 }
 
 const optionStyles = {
@@ -41,26 +41,32 @@ let colorScale = scaleLinear()
 
 const urlParams = new URLSearchParams(window.location.search);
 
+let inputValue = ''
+
 class AlbersUSA extends Component {
   constructor() {
     super()
     this.state = {
       logs_api_output: [],
       sorting_key: '',
-      aggregation: ''
+      aggregation: '',
+      query: ''
     }
 
     // deprecating in favor of react-select
     // this.switchToAvg = this.switchToAvg.bind(this)
     // this.switchToSum = this.switchToSum.bind(this)
     this.switchAggregation = this.switchAggregation.bind(this)
+    this.submitQuery = this.submitQuery.bind(this)
+    this.handleQueryChange = this.handleQueryChange.bind(this)
+    // this.handleChange = this.handleChange.bind(this)
   }
 
   componentWillMount() {
     this.callBackendAPI().then( (res) => {
-      this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'revenue', aggregation: res.aggregation || 'sum' })
+      this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'revenue', aggregation: res.aggregation || 'sum' , query: res.query || undefined })
     }).catch( (err) => {
-      this.setState({ logs_api_output: [], sorting_key: '', aggregation: '' })
+      this.setState({ logs_api_output: [], sorting_key: '', aggregation: '', query: '' })
     })
   }
 
@@ -88,20 +94,58 @@ class AlbersUSA extends Component {
     this.setState({ aggregation: aggregation.value})
   }
 
+  handleQueryChange(query) {
+      inputValue = query
+      console.log(inputValue)
+  }  
+
+  // handleChange(query) {
+  //   console.log('running', query)
+  //   this.setState({query: query})
+  // }
+
+  submitQuery(event) {
+    console.log('submit', event)
+    if (event.key === "Enter") {
+      console.log('submitting', this.state.query)
+      console.log(inputValue)
+      this.setState({query: [{value: inputValue,label: inputValue}]})
+      event.preventDefault();
+    }
+    // this.setState({ query: aggregation.value})
+  }  
+
   render() {
+    console.log('rerender')
     const logs_api_output = this.state.logs_api_output
     const sorting_key = this.state.sorting_key
     const aggregation = this.state.aggregation
+    const query = this.state.query
 
+    console.log('query ', query)
     return (
       <div>
         <div style={optionStyles}>
-          <p> Aggregation Type </p>
-          <Select
-            value={aggregation.label}
-            onChange={this.switchAggregation}
-            options={options}
-          />
+          <div>
+            <p> Aggregation Type </p>
+            <Select
+              value={aggregation.label}
+              onChange={this.switchAggregation}
+              options={options}
+            />
+          </div>
+          <div>
+            <p> Query </p>
+            <CreatableSelect
+              menuIsOpen={false}
+              isClearable
+              onInputChange={this.handleQueryChange}
+              onKeyDown={this.submitQuery}
+              // placeholder={`${query || "Type something and press enter..."}`}
+              components={{DropdownIndicator: null}}
+              value={query}
+            />
+          </div>
         </div>
         <div style={mapStyles}>
           <ComposableMap
