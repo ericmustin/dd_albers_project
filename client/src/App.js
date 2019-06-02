@@ -10,9 +10,11 @@ import * as us_json from "./us_states.json";
 import ReactTooltip from 'react-tooltip';
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const mapStyles = {
-  width: "80%",
+  width: "75%",
   maxWidth: 980,
   margin: "0 auto",
   float: "left",
@@ -21,7 +23,7 @@ const mapStyles = {
 }
 
 const optionStyles = {
-  width: "20%",
+  width: "25%",
   maxWidth: 400,
   margin: "0 auto",
   float: "left",
@@ -59,15 +61,20 @@ class AlbersUSA extends Component {
     this.switchAggregation = this.switchAggregation.bind(this)
     this.submitQuery = this.submitQuery.bind(this)
     this.handleQueryChange = this.handleQueryChange.bind(this)
-    // this.handleChange = this.handleChange.bind(this)
+    this.switchStartDate = this.switchStartDate.bind(this)
+    this.updateQuery = this.updateQuery.bind(this)
   }
 
-  componentWillMount() {
-    this.callBackendAPI().then( (res) => {
-      this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'revenue', aggregation: res.aggregation || 'sum' , query: res.query || undefined })
-    }).catch( (err) => {
-      this.setState({ logs_api_output: [], sorting_key: '', aggregation: '', query: '' })
-    })
+  componentDidMount() {
+    this.callBackendAPI().then(this.setResponse).catch(this.setError)
+  }
+
+  setResponse = (res) => {
+    this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'revenue', aggregation: res.aggregation || 'sum' , query: res.query || undefined , start_date: res.start_date || new Date()})
+  }
+
+  setError = (err) => {
+    this.setState({ logs_api_output: [], sorting_key: '', aggregation: '', query: '', start_date: new Date() })
   }
 
   callBackendAPI = async () => {
@@ -82,27 +89,18 @@ class AlbersUSA extends Component {
     return body;
   }
 
-  // deprecating in favor of react-select
-  // switchToAvg() {
-  //   this.setState({ aggregation: "avg" })
-  // }
-  // switchToSum() {
-  //   this.setState({ aggregation: "sum" })
-  // }
+  updateQuery = () => {
+    this.callBackendAPI().then(this.setResponse).catch(this.setError)
+  }
 
   switchAggregation(aggregation) {
     this.setState({ aggregation: aggregation.value})
   }
 
   handleQueryChange(query) {
-      inputValue = query
-      console.log(inputValue)
-  }  
+    inputValue = query
 
-  // handleChange(query) {
-  //   console.log('running', query)
-  //   this.setState({query: query})
-  // }
+  }  
 
   submitQuery(event) {
     console.log('submit', event)
@@ -113,7 +111,12 @@ class AlbersUSA extends Component {
       event.preventDefault();
     }
     // this.setState({ query: aggregation.value})
-  }  
+  }
+
+  switchStartDate(date) {
+    this.setState({ start_date: date})
+    console.log(this.state.start_date, +this.state.start_date)
+  }
 
   render() {
     console.log('rerender')
@@ -121,8 +124,8 @@ class AlbersUSA extends Component {
     const sorting_key = this.state.sorting_key
     const aggregation = this.state.aggregation
     const query = this.state.query
+    const start_date = this.state.start_date
 
-    console.log('query ', query)
     return (
       <div>
         <div style={optionStyles}>
@@ -145,6 +148,21 @@ class AlbersUSA extends Component {
               components={{DropdownIndicator: null}}
               value={query}
             />
+          </div>
+          <div>
+            <p> Start Date </p>
+            <DatePicker
+                selected={start_date}
+                onChange={this.switchStartDate}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="MMMM d, yyyy h:mm aa"
+                timeCaption="time"
+            />          
+          </div>
+          <div>
+            <button onClick={this.updateQuery}> Update Map </button>
           </div>
         </div>
         <div style={mapStyles}>

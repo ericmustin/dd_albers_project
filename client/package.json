@@ -6,6 +6,7 @@
     "d3-fetch": "^1.1.2",
     "d3-scale": "^3.0.0",
     "react": "^16.8.6",
+    "react-datepicker": "^2.6.0",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
     "react-select": "^3.0.3",
