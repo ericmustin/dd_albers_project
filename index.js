@@ -50,15 +50,12 @@ app.get('/api', async (req,res) => {
     
     if (config_data.data) {
       query_body = config_data.data
-
-      // console.log('query_body', query_body)
-      // console.log('test_query', test_query)
     }
   }
   
 	dogapi.client.request("POST", "/logs-queries/list", { body: query_body},function(err, results){
-	    res.json({logs: results.logs, aggregation: results.aggregation, sorting_key: results.sorting_key});
-    })
+    res.json({logs: results.logs, aggregation: results.aggregation, sorting_key: results.sorting_key});
+  })
 });
 
 // Handles any requests that don't match the ones above

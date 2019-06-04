@@ -65,9 +65,6 @@ class AlbersUSA extends Component {
       query: ''
     }
 
-    // deprecating in favor of react-select
-    // this.switchToAvg = this.switchToAvg.bind(this)
-    // this.switchToSum = this.switchToSum.bind(this)
     this.switchAggregation = this.switchAggregation.bind(this)
     this.submitQuery = this.submitQuery.bind(this)
     this.handleQueryChange = this.handleQueryChange.bind(this)
@@ -80,7 +77,7 @@ class AlbersUSA extends Component {
   }
 
   setResponse = (res) => {
-    this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'revenue', aggregation: res.aggregation || 'sum' , query: res.query || undefined , start_date: res.start_date || new Date()})
+    this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'byte_read', aggregation: res.aggregation || 'avg' , query: res.query || undefined , start_date: res.start_date || new Date()})
   }
 
   setError = (err) => {
@@ -219,19 +216,19 @@ class AlbersUSA extends Component {
                   },{})
 
                   return geographies.map((geography, i) => {
-                    let stateRevenue = 0
+                    let stateDetail = 0
 
                     if (sorted_logs_api_output[geography.properties.NAME_1] !== undefined) {
                       if (aggregation == 'avg') {
-                        stateRevenue = sorted_logs_api_output[geography.properties.NAME_1]['sum'] /  sorted_logs_api_output[geography.properties.NAME_1]['count']
+                        stateDetail = sorted_logs_api_output[geography.properties.NAME_1]['sum'] /  sorted_logs_api_output[geography.properties.NAME_1]['count']
                       } else if (aggregation == 'sum') {
-                        stateRevenue = sorted_logs_api_output[geography.properties.NAME_1]['sum']
+                        stateDetail = sorted_logs_api_output[geography.properties.NAME_1]['sum']
                       }
                     }
 
                     return (
                       <Geography
-                        data-tip={`${geography.properties.NAME_1}, revenue: $${stateRevenue}`}
+                        data-tip={`${geography.properties.NAME_1}, ${sorting_key}: $${stateDetail}`}
                         data-for='global'
                         key={`state-${geography.properties.ID_1}`}
                         cacheId={`state-${geography.properties.ID_1}`}
@@ -240,7 +237,7 @@ class AlbersUSA extends Component {
                         projection={projection}
                         style={{
                           default: {
-                            fill: colorScale(+stateRevenue),
+                            fill: colorScale(+stateDetail),
                             stroke: "#607D8B",
                             strokeWidth: 0.75,
                             outline: "none"
