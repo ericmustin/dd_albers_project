@@ -34,7 +34,8 @@ app.use(limiter);
 // An api endpoint that returns a short list of items
 app.get('/api', async (req,res) => {
   let query_body = {}
-  
+  let sorting_key = undefined
+  let aggregation = undefined
 
   // console.log(decodeURI(req.query.query))
   if(req.query.query !== undefined) {
@@ -42,19 +43,23 @@ app.get('/api', async (req,res) => {
     query_body['time'] = {from: req.query.start_date, to: 'now'}
     query_body['sort'] = 'desc'
     query_body['limit'] = 1000
-    // console.log('in here')
+    sorting_key = req.query.sorting_key
+    aggregation = req.query.aggregation
   } 
+
 
   if (req.query.config) {
     let config_data = await axios.get(req.query.config)
     
     if (config_data.data) {
       query_body = config_data.data.request_body
+      sorting_key = config_data.data.sorting_key
+      aggregation = config_data.data.aggregation
     }
   }
   
 	dogapi.client.request("POST", "/logs-queries/list", { body: query_body},function(err, results){
-    res.json({logs: results.logs, aggregation: config_data.data.aggregation, sorting_key: config_data.data.sorting_key });
+    res.json({logs: results.logs, aggregation: aggregation, sorting_key: sorting_key });
   })
 });
 
