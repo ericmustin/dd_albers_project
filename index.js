@@ -3,9 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const util = require('util');
-const puppeteer = require('puppeteer')
 const dogapi = require("dogapi");
-const fs = require('fs');
 const axios = require('axios')
 const rateLimit = require("express-rate-limit");
 // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -41,7 +39,7 @@ app.get('/api', async (req,res) => {
   // console.log(decodeURI(req.query.query))
   if(req.query.query !== undefined) {
     test_query['query'] = decodeURI(req.query.query)
-    test_query['time'] = {from: ""+req.query.start_date, to: 'now'}
+    test_query['time'] = {from: req.query.start_date, to: 'now'}
     test_query['sort'] = 'desc'
     test_query['limit'] = 1000
     // console.log('in here')
@@ -75,21 +73,6 @@ app.get('/', (req,res) => {
   res.redirect(`/graph?config=${req.query.config}`)
 })
 
-app.get('/svg_response_api', async (req,res) => {
-	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
-    const page = await browser.newPage();
-    let hostname = req.headers.host
-
-    await page.setViewport({ width: 1200, height: 800 })
-    await page.goto(`http://${hostname}?config=${req.query.config}`, {waitUntil: 'networkidle0'});
-    await page.waitFor(3000)
-    const svg = await page.$("svg");
-    const html = await page.evaluate(svg =>{ svg.setAttribute('xmlns',"http://www.w3.org/2000/svg"); return svg.outerHTML}, svg)
-  	await browser.close();
-
-    res.setHeader('Content-Type', 'image/svg+xml');
-  	res.send(html)
-})
 
 const port = process.env.PORT || 5000;
 var listener = app.listen(port);

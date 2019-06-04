@@ -32,6 +32,16 @@ const optionStyles = {
   textAlign: "center"
 }
 
+const buttonStyle = {
+  color: "#333",
+  borderRadius: "4px",
+  textShadow: "0 1px 1px rgba(0, 0, 0, 0.2)",
+  backgroundColor: "#eee",
+  margin: "8px",
+  minHeight: "36px",
+  fontSize: "16px"
+}
+
 const options = [
   { value: 'avg', label: 'Average' },
   { value: 'sum', label: 'Sum' }
@@ -78,11 +88,18 @@ class AlbersUSA extends Component {
   }
 
   callBackendAPI = async () => {
-    const myParam = urlParams.get('config');
-    let params = `config=${myParam}`
-    if (this.state && this.state.query &&  Array.isArray(this.state.query)) {
-      params += `&query=${encodeURIComponent(this.state.query[0].value)}&sorting_key=${this.state.sorting_key}&aggregation=${this.state.aggregation}&start_date=${+this.state.start_date}`
+    let params = ''
+    
+    let myParam = urlParams.get('config');
+
+    if (myParam !== undefined) {
+      params += `config=${myParam}&`
     }
+
+    if (this.state && this.state.query &&  Array.isArray(this.state.query)) {
+      params += `query=${encodeURIComponent(this.state.query[0].value)}&sorting_key=${this.state.sorting_key}&aggregation=${this.state.aggregation}&start_date=${+this.state.start_date}`
+    }
+
     const response = await fetch(`/api?${params}`);
     const body = await response.json();
 
@@ -104,7 +121,6 @@ class AlbersUSA extends Component {
 
   handleQueryChange(query) {
     inputValue = query
-
   }  
 
   submitQuery(event) {
@@ -167,7 +183,7 @@ class AlbersUSA extends Component {
             />          
           </div>
           <div>
-            <button onClick={this.updateQuery}> Update Map </button>
+            <button onClick={this.updateQuery} style={buttonStyle}> Update Map </button>
           </div>
         </div>
         <div style={mapStyles}>
