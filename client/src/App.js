@@ -77,7 +77,7 @@ class AlbersUSA extends Component {
   }
 
   setResponse = (res) => {
-    this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'byte_read', aggregation: res.aggregation || 'avg' , query: res.query || undefined , start_date: res.start_date || new Date()})
+    this.setState({ logs_api_output: res.logs || [], sorting_key: res.sorting_key || 'bytes_read', aggregation: res.aggregation || 'avg' , query: res.query || undefined , start_date: res.start_date || new Date()})
   }
 
   setError = (err) => {
