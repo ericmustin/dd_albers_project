@@ -34,14 +34,14 @@ app.use(limiter);
 // An api endpoint that returns a short list of items
 app.get('/api', async (req,res) => {
   let query_body = {}
-  let test_query = {}
+  
 
   // console.log(decodeURI(req.query.query))
   if(req.query.query !== undefined) {
-    test_query['query'] = decodeURI(req.query.query)
-    test_query['time'] = {from: req.query.start_date, to: 'now'}
-    test_query['sort'] = 'desc'
-    test_query['limit'] = 1000
+    query_body['query'] = decodeURI(req.query.query)
+    query_body['time'] = {from: req.query.start_date, to: 'now'}
+    query_body['sort'] = 'desc'
+    query_body['limit'] = 1000
     // console.log('in here')
   } 
 

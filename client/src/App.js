@@ -90,14 +90,11 @@ class AlbersUSA extends Component {
   callBackendAPI = async () => {
     let params = ''
     
-    let myParam = urlParams.get('config');
-
-    if (myParam !== undefined) {
-      params += `config=${myParam}&`
-    }
-
     if (this.state && this.state.query &&  Array.isArray(this.state.query)) {
       params += `query=${encodeURIComponent(this.state.query[0].value)}&sorting_key=${this.state.sorting_key}&aggregation=${this.state.aggregation}&start_date=${+this.state.start_date}`
+    } else if (urlParams.get('config') !== undefined) {
+      let myParam = urlParams.get('config')
+      params += `config=${myParam}`
     }
 
     const response = await fetch(`/api?${params}`);
