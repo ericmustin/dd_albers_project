@@ -228,7 +228,7 @@ class AlbersUSA extends Component {
 
                     return (
                       <Geography
-                        data-tip={`${geography.properties.NAME_1}, ${sorting_key}: $${stateDetail}`}
+                        data-tip={`${geography.properties.NAME_1}, ${sorting_key}: ${stateDetail}`}
                         data-for='global'
                         key={`state-${geography.properties.ID_1}`}
                         cacheId={`state-${geography.properties.ID_1}`}
