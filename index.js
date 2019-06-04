@@ -54,7 +54,7 @@ app.get('/api', async (req,res) => {
   }
   
 	dogapi.client.request("POST", "/logs-queries/list", { body: query_body},function(err, results){
-    res.json({logs: results.logs, aggregation: results.aggregation, sorting_key: results.sorting_key});
+    res.json({logs: results.logs, aggregation: query_body.aggregation, sorting_key: query_body.sorting_key});
   })
 });
 
