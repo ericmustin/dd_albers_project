@@ -49,12 +49,12 @@ app.get('/api', async (req,res) => {
     let config_data = await axios.get(req.query.config)
     
     if (config_data.data) {
-      query_body = config_data.data
+      query_body = config_data.data.request_body
     }
   }
   
 	dogapi.client.request("POST", "/logs-queries/list", { body: query_body},function(err, results){
-    res.json({logs: results.logs, aggregation: query_body.aggregation, sorting_key: query_body.sorting_key});
+    res.json({logs: results.logs, aggregation: config_data.data.aggregation, sorting_key: config_data.data.sorting_key });
   })
 });
 
