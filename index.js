@@ -36,11 +36,25 @@ app.use(limiter);
 // An api endpoint that returns a short list of items
 app.get('/api', async (req,res) => {
   let query_body = {}
+  let test_query = {}
+
+  console.log(decodeURI(req.query.query))
+  if(req.query.query !== undefined) {
+    test_query['query'] = decodeURI(req.query.query)
+    test_query['time'] = {from: ""+req.query.start_date, to: 'now'}
+    test_query['sort'] = 'desc'
+    test_query['limit'] = 1000
+    console.log('in here')
+  } 
+
   if (req.query.config) {
     let config_data = await axios.get(req.query.config)
     
     if (config_data.data) {
       query_body = config_data.data
+
+      console.log('query_body', query_body)
+      console.log('test_query', test_query)
     }
   }
   

@@ -78,8 +78,12 @@ class AlbersUSA extends Component {
   }
 
   callBackendAPI = async () => {
-    const myParam = urlParams.get('config');    
-    const response = await fetch(`/api?config=${myParam}`);
+    const myParam = urlParams.get('config');
+    let params = `config=${myParam}`
+    if (this.state && this.state.query &&  Array.isArray(this.state.query)) {
+      params += `&query=${encodeURIComponent(this.state.query[0].value)}&sorting_key=${this.state.sorting_key}&aggregation=${this.state.aggregation}&start_date=${+this.state.start_date}`
+    }
+    const response = await fetch(`/api?${params}`);
     const body = await response.json();
 
     if (response.status !== 200) {
@@ -90,6 +94,7 @@ class AlbersUSA extends Component {
   }
 
   updateQuery = () => {
+    console.log(this.state)
     this.callBackendAPI().then(this.setResponse).catch(this.setError)
   }
 
