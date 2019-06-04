@@ -94,7 +94,7 @@ class AlbersUSA extends Component {
   }
 
   updateQuery = () => {
-    console.log(this.state)
+    // console.log(this.state)
     this.callBackendAPI().then(this.setResponse).catch(this.setError)
   }
 
@@ -108,10 +108,10 @@ class AlbersUSA extends Component {
   }  
 
   submitQuery(event) {
-    console.log('submit', event)
+    // console.log('submit', event)
     if (event.key === "Enter") {
-      console.log('submitting', this.state.query)
-      console.log(inputValue)
+      // console.log('submitting', this.state.query)
+      // console.log(inputValue)
       this.setState({query: [{value: inputValue,label: inputValue}]})
       event.preventDefault();
     }
@@ -120,11 +120,11 @@ class AlbersUSA extends Component {
 
   switchStartDate(date) {
     this.setState({ start_date: date})
-    console.log(this.state.start_date, +this.state.start_date)
+    // console.log(this.state.start_date, +this.state.start_date)
   }
 
   render() {
-    console.log('rerender')
+    // console.log('rerender')
     const logs_api_output = this.state.logs_api_output
     const sorting_key = this.state.sorting_key
     const aggregation = this.state.aggregation
